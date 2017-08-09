@@ -1,0 +1,90 @@
+@model IEnumerable<PrestamosWeb.Models.Usuarios>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+    <div class="form-group">
+        <div class="input-group">
+            <span class="input-group-addon">FacturaId:</span>
+            <input class="form-control input-group-lg col-2" type="text" id="tbId" placeholder="Id" />
+            <button type="button" class="btn btn-success col-sm-2" id="btnBuscar" onclick="Buscar()">Filtrar</button>
+        </div>
+    </div>
+</p>
+
+<div id="HTMLtoPDF">
+    <table id="tabla" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Usuario</th>
+            </tr>
+        </thead>
+        <tbody id="tbBody"></tbody>
+    </table>
+</div>
+
+<a href="#" onclick="HTMLtoPDF()">Reporte</a>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script src="~/js/jquery-3.1.1.min.js"></script>
+        <script src="~/js/jspdf.js"></script>
+        <script type="text/javascript">
+            var cont;
+            function HTMLtoPDF() {
+                if (cont >= 1) {
+                    var pdf = new jsPDF('p', 'pt', 'letter');
+                    source = $('#HTMLtoPDF')[0];
+                    specialElementHandlers = {
+                        '#bypassme': function (element, renderer) {
+                            return true
+                        }
+                    }
+                    margins = {
+                        top: 1,
+                        left: 100,
+                        width: 1000
+                    };
+                    pdf.fromHTML(
+                        source
+                        , margins.left
+                        , margins.top
+                        , {
+                            'width': margins.width
+                            , 'elementHandlers': specialElementHandlers
+                        },
+                        function (dispose) {
+                            pdf.save('ReporteFacturas.pdf');
+                        }
+                    )
+                }
+                else { alert("No se puede realizar el reporte"); }
+            }
+            function Buscar() {
+                $('#tbBody tr').remove();
+                cont = 0;
+                var Id = $('#tbId').val();
+                $.getJSON("/Usuarios/Lista",
+                    { Id: Id }, function (lista) {
+                        var fila = "<tr>"
+                            + "<td>" + lista.nombre + "</td>"
+                            + "<td>" + lista.apellido + "</td>"
+                            + "<td>" + lista.email + "</td>"
+                            + "<td>" + lista.nombreUsuario + "</td>"
+                            + "</tr>";
+                        $('#tabla tbody').append(fila);
+                        cont++;
+                    });
+            }
+        </script>
+    }
+}
+
+

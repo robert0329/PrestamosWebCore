@@ -1,0 +1,287 @@
+@model PrestamosWeb.Models.Usuarios
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>Usuarios</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">UsuarioId:</span>
+                <input class="form-control input-group-lg col-2" type="text" id="tbId" placeholder="Id" />
+                <button type="button" class="btn btn-success col-sm-2" id="btnBuscar" onclick="Buscar()">Buscar</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Nombre:</span>
+                <input class="form-control input-group-lg col-2" type="text" id="tbNombre" placeholder="Nombre" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Apellido:</span>
+                <input class="form-control input-group-lg col-2" type="text" id="tbApellido" placeholder="Apellido" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Email:</span>
+                <input class="form-control input-group-lg col-2" type="text" id="tbEmail" placeholder="Email" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Usuario:</span>
+                <input class="form-control input-group-lg col-2" type="text" id="tbUsuario" placeholder="Usuario" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Contraseña:</span>
+                <input class="form-control input-group-lg col-2" type="text" id="tbContraseña" placeholder="Contraseña" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Confirmar Contraseña:</span>
+                <input class="form-control input-group-lg col-2" type="text" id="tbConfirmarContraseña" placeholder="Confirmar Contraseña" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Tipo Usuario</span>
+                <select class="form-control selected" id="tbTipo">
+                    <option value="0" disabled selected> </option>
+                    <option value="1" selected>Admin</option>
+                    <option value="2" selected>Empleado</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group text-center col-xl-12">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="button" class="btn btn-info col-sm-2" id="btnLimpiar" onclick="LimpiarCampos(0)">Nuevo</button>
+                <button type="button" class="btn btn-success col-sm-2" id="btnCrear" onclick="Validar()">Crear Usuario</button>
+                <button type="button" class="btn btn-info col-sm-2" id="btnModificar" onclick="Armar(1)">Modificar</button>
+                <button type="button" class="btn btn-success col-sm-2" id="btnEliminar" onclick="Armar(2)">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script type="text/javascript" src="~/js/bootstrap-datepicker.min.js"></script>
+        <script src="~/js/jquery-3.1.1.min.js"></script>
+        <script src="~/js/jquery-ui.js"></script>
+        <script type="text/javascript" src="~/js/inputmask.js" charset="utf-8"></script>
+        <script type="text/javascript" src="~/js/inputmask.numeric.extensions.js" charset="utf-8"></script>
+        <script type="text/javascript" src="~/js/jquery.inputmask.js" charset="utf-8"></script>
+        <script type="text/javascript">
+            $("#tbId").inputmask("numeric");
+            function Validar() {
+                $("#tbNombre").parent().removeClass('has-warning');
+                $("#tbApellido").parent().removeClass('has-warning');
+                $("#tbEmail").parent().removeClass('has-warning');
+                $("#tbUsuario").parent().removeClass('has-warning');
+                $("#tbContraseña").parent().removeClass('has-warning');
+                $("#tbTipo").parent().removeClass('has-warning');
+
+                var Nombre = $('#tbNombre').val();
+                var Apellido = $('#tbApellido').val();
+                var Email = $('#tbEmail').val();
+                var Usuario = $('#tbUsuario').val();
+                var Contraseña = $('#tbContraseña').val();
+                var ConfirmarContraseña = $('#tbConfirmarContraseña').val();
+                var TipoId = $('#tbTipo').find('option:selected').attr('value');
+
+                if (Nombre == "") {
+                    $("#tbNombre").parent().addClass("has-warning");
+                } else
+                    if (Apellido == "") {
+                        $("#tbApellido").parent().addClass("has-warning");
+                    } else
+                        if (Email == "") {
+                            $("#tbEmail").parent().addClass("has-warning");
+                        } else
+                            if (Usuario == "") {
+                                $("#tbUsuario").parent().addClass("has-warning");
+                            } else
+                                if (Contraseña != ConfirmarContraseña) {
+                                    $("#tbContraseña").parent().addClass("has-warning");
+                                } else
+                                    if (TipoId < 1) {
+                                        $("#tbTipo").parent().addClass("has-warning");
+                                    }
+                                    else {
+                                        return true;
+                                    }
+            }
+            function Crear() {
+                if (Validar() == true)
+                {
+                    alert("paso");
+                } else
+                { alert("no paso"); }
+
+                var Id = $('#tbId').val();
+                var Nombre = $('#tbNombre').val();
+                var Apellido = $('#tbApellido').val();
+                var Email = $('#tbEmail').val();
+                var Usuario = $('#tbUsuario').val();
+                var Contraseña = $('#tbContraseña').val();
+                var ConfirmarContraseña = $('#tbConfirmarContraseña').val();
+                var TipoId = $('#tbTipo').find('option:selected').attr('value');
+
+                var nueva = {
+                    UsuarioId: 0,
+                    Nombre: Nombre,
+                    Apellido: Apellido,
+                    Email: Email,
+                    NombreUsuario: Usuario,
+                    Contraseña: Contraseña,
+                    Tipo: TipoId
+                }
+                Guardar(nueva);
+
+            }
+            function Armar(motivo) {
+                var Id = $('#tbId').val();
+                var Nombre = $('#tbNombre').val();
+                var Apellido = $('#tbApellido').val();
+                var Email = $('#tbEmail').val();
+                var Usuario = $('#tbUsuario').val();
+                var Contraseña = $('#tbContraseña').val();
+                var ConfirmarContraseña = $('#tbConfirmarContraseña').val();
+                var TipoId = $('#tbTipo').find('option:selected').attr('value');
+
+                if (Contraseña == ConfirmarContraseña && Nombre != "" && Apellido != "") {
+                    var nueva = {
+                        UsuarioId: Id,
+                        Nombre: Nombre,
+                        Apellido: Apellido,
+                        Email: Email,
+                        NombreUsuario: Usuario,
+                        Contraseña: Contraseña,
+                        Tipo: TipoId
+                    }
+
+                    if (motivo == 1) {
+                        Modificar(nueva);
+                    }
+                    else if (motivo == 2) {
+
+                        Eliminar(nueva);
+                    }
+                } else { alert("No se pudo realizar su solicitud"); }
+            }
+            
+            function Guardar(data) {
+                $.ajax(
+                    {
+                        method: "POST",
+                        url: "/Usuarios/Guardar",
+                        data: data,
+                        success: function (id) {
+                            if (id == true) {
+                                alert("Usuario Guardado");
+                                LimpiarCampos(0);
+                            } else { alert("No pudo guardarse el usuario"); }
+
+                        }
+                    });
+            };
+            function Buscar() {
+                var id = $("#tbId").val();
+                if (id.length > 0 && jQuery.isNumeric(id)) {
+                    $.getJSON("/Usuarios/Buscar", { Id: id }, function (acc) {
+                        if (acc != null) {
+                            $("#tbId").attr('disabled', 'disabled');
+                            $('#Tipo').find('option').remove();
+                            $('#tbNombre').val(acc.nombre);
+                            $('#tbApellido').val(acc.apellido);
+                            $('#tbEmail').val(acc.email);
+                            $('#tbUsuario').val(acc.nombreUsuario);
+                        }
+                        else if (acc == null) {
+                            alert("El usuario que ha solicitado al parecer no esta disponible o ha sido eliminada");
+                            $("#tbId").removeAttr("disabled");
+                            LimpiarCampos(0);
+                            $("#tbId").parent().addClass("has-warning");
+                        }
+                    });
+                }
+                else {
+
+                    $("#tbId").parent().addClass("has-error");
+                    alert("Solo se acceptan numeros y verifique que el campo no este vacio!");
+                }
+            }
+            function Modificar(enca) {
+                $.ajax({
+                    method: "POST",
+                    url: "/Usuarios/Modificar",
+                    data: enca,
+                    success: function (res) {
+                        if (res != null) {
+                            alert("El usuario ha sido modificada.");
+                            LimpiarCampos(0);
+                        } else {
+                            alert("No se a podido procesar su solicitud.");
+                        }
+                    },
+                    error: function (error) {
+                    }
+                });
+            }
+            function Eliminar(enca) {
+                $.ajax({
+                    method: "POST",
+                    url: "/Usuarios/Eliminar",
+                    data: enca,
+                    success: function (res) {
+                        if (res != null) {
+                            alert("El usuario ha sido eliminada correctamente.");
+                            LimpiarCampos(0);
+                        }
+                        else {
+                            alert("No se ha podido procesar su solicitud.");
+                        }
+                        LimpiarCampos(0);
+                    }
+                })
+            }
+            function LimpiarCampos(modo) {
+                $("#tbId").removeAttr("disabled");
+                $('#tbTipo').val($('#ClienteList > option:first').val());
+                $('#tbNombre').val("");
+                $('#tbApellido').val("");
+                $('#tbEmail').val("");
+                $('#tbUsuario').val("");
+                $('#tbContraseña').val("");
+                $('#tbConfirmarContraseña').val("");
+                NextId();
+            }
+            function NextId() {
+                $.getJSON("/Usuarios/LastIndex", function (id) {
+                    $('#tbId').val(id);
+                });
+            }
+            $(document).ready(function () {
+                LimpiarCampos(0);
+            });
+
+        </script>
+    }
+}
